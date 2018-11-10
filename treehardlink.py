@@ -4,6 +4,7 @@ import os
 import subprocess
 import sqlite3
 import sys
+from shlex import quote as shell_arg_quote
 
 conn = sqlite3.connect('treehardlink.sqlite3')
 
@@ -39,7 +40,7 @@ for dir in sys.argv[1:]:
         print("Directory not found: {}".format(dir))
         exit(1)
     print("Getting file list of {}...".format(dir))
-    find_cmd = "find {} -type f".format(dir)
+    find_cmd = "find {} -type f".format(shell_arg_quote(dir))
     p = subprocess.Popen(find_cmd, shell=True, stdout=subprocess.PIPE)
     filenames = []
     for filename in p.stdout.readlines():
