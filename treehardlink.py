@@ -6,6 +6,8 @@ import sqlite3
 import sys
 from shlex import quote as shell_arg_quote
 
+MIN_SIZE = 10240  # minimal size required we hardlink unlinked files, smaller files are not worth it
+
 conn = sqlite3.connect('treehardlink.sqlite3')
 
 tbl = """
@@ -70,6 +72,11 @@ print("Applying indexes...")
 for idx in idxes:
     c.execute(idx)
 conn.commit()
+
+sql = """SELECT size, path, count(path) AS cnt FROM files WHERE size > {:d} GROUP BY path HAVING cnt > 1 ORDER BY cnt DESC""".format(MIN_SIZE)
+
+sql = """SELECT size, COUNT(size) AS size_cnt, path, COUNT(path) AS path_cnt FROM files WHERE size > 10240 GROUP BY size, path HAVING size_cnt > 1 ORDER BY path_cnt DESC"""
+
 print("Done.")
 
 
