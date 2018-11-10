@@ -10,17 +10,17 @@ conn = sqlite3.connect('treehardlink.sqlite3')
 
 tbl = """
 CREATE TABLE files (
-inode INT PRIMARY KEY,
-dir VARCHAR,
-path VARCHAR,
-mode INT NULL,
-number_of_links INT NULL,
-uid INT NULL,
-gid INT NULL,
-size INT NULL,
-mtime INT NULL,
-ctime INT NULL,
-found INT NULL
+inode INT PRIMARY KEY,    -- inode of file, unique per file contents
+dir VARCHAR,              -- snapshot directory the file resides
+path VARCHAR,             -- relative path within snapshot dir
+mode INT NULL,            -- file mode
+number_of_links INT NULL, -- link count found with stat
+uid INT NULL,             -- user id of file
+gid INT NULL,             -- group id of file
+size INT NULL,            -- file size in bytes
+mtime INT NULL,           -- modification timestamp
+ctime INT NULL,           -- creation timestamp
+found INT NULL            -- times the inode is found within our trees. can be less than num_of_links if external links exist
 );
 """
 
