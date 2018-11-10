@@ -27,10 +27,14 @@ found INT NULL            -- times the inode is found within our trees. can be l
 idxes = (
     "CREATE INDEX idx_files_dir  ON files(dir)",
     "CREATE INDEX idx_files_path  ON files(path)",
-    "CREATE INDEX idx_files_number_of_links ON files(number_of_links)",
+    "CREATE INDEX idx_files_size ON files(size)",
 )
 
+# TODO
+# maybe we should make table data reusable later on, so a rescan can be much more efficient the second time
+# only processing the differences
 c = conn.cursor()
+c.execute("DROP TABLE IF EXISTS files")
 c.execute(tbl)
 conn.commit()
 
