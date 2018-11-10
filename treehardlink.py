@@ -19,7 +19,8 @@ uid INT NULL,
 gid INT NULL,
 size INT NULL,
 mtime INT NULL,
-ctime INT NULL
+ctime INT NULL,
+found INT NULL
 );
 """
 
@@ -51,8 +52,12 @@ for dir in sys.argv[1:]:
         dirlen = len(dir)
         path = filename[dirlen:]
         s = os.stat(filename)
-        sql = "INSERT OR IGNORE INTO files (inode, dir, path, mode, number_of_links, uid, gid, size, mtime, ctime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        # TODO: look if this can be done more efficient
+        sql = """INSERT OR IGNORE INTO files (inode, dir, path, mode, number_of_links, uid, gid, size, mtime, ctime, found)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+            """
         c.execute(sql, (s.st_ino, dir, path, s.st_mode, s.st_nlink, s.st_uid, s.st_gid, s.st_size, s.st_mtime, s.st_ctime))
+        c.execute("UPDATE files SET found = found + 1 WHERE inode = ?", (s.st_ino,))
     conn.commit()
 
 print("Applying indexes...")
