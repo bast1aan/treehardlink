@@ -45,6 +45,8 @@ for dir in sys.argv[1:]:
     p = subprocess.Popen(find_cmd, shell=True, stdout=subprocess.PIPE)
     filenames = []
     for filename in p.stdout.readlines():
+        if type(filename) is bytes:
+            filename = filename.decode()
         filenames.append(filename)
     print("Statting files in dir {}...".format(dir))
     for filename in filenames:
